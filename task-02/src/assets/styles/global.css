@@ -131,8 +131,23 @@ body {
 }
 
 .meme-field {
+    grid-column: 2;
+
     background: #FFFFFF;
     border-radius: 12px;
+
+    position: absolute;
+    overflow-clip-margin: content-box;
+    overflow: clip;
+}
+
+.canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
 }
 
 .meme-field_init {

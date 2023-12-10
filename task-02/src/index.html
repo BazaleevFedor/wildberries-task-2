@@ -17,10 +17,14 @@
             <div>Управление</div>
             <div class="menu__management"></div>
         </div>
-        <canvas class="meme-field meme-field_init" id="js-meme"></canvas>
+        <div class="meme-field meme-field_init" id="js-meme">
+            <canvas class="meme-img canvas" id="js-meme-img"></canvas>
+            <canvas class="meme-text canvas" id="js-meme-text"></canvas>
+        </div>
+        <div id="js-edit-text" contentEditable="true"></div>
         <div class="add-image" id="js-add-image">
             <input type="file" class="display-none" id="js-input-img" accept="image/*">
-            <div class="add-image__text">Создайте мем из изображений JPG, GIF или PNG.</div>
+            <div class="add-image__text">Создайте мем из изображений.</div>
             <button class="add-image__button background-blue cursor-pointer" id="js-add-img">Загрузить картинку</button>
         </div>
     </div>

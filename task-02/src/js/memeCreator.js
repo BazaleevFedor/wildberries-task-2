@@ -4,34 +4,33 @@ import {context} from "./context.js";
 class MemeCreator {
     constructor() {
         this._render();
-        this._convas = document.getElementById('js-meme');
+        this._meme = document.getElementById('js-meme');
+        this._convasImg = document.getElementById('js-meme-img');
+        this._convasText = document.getElementById('js-meme-text');
         this._addListeners();
+        this._offsetLeft = this._convasImg.offsetLeft;
+        this._offsetTop = this._convasImg.offsetTop;
+        this._textList = new Map();
     }
 
     _addListeners = () => {
         const addImgButton = document.getElementById('js-add-img');
         const addImgInput = document.getElementById('js-input-img');
+        const managementButtons = document.querySelectorAll('.management__item');
+
         addImgButton.addEventListener('click', () => {
             addImgInput.click();
         });
 
         addImgInput.addEventListener('change', (event) => {
             const file = event.target.files[0];
-
             if (file && file.type.startsWith('image')) {
-                document.getElementById('js-add-image').classList.add('display-none');
-                document.getElementById('js-add-image').classList.remove('add-image');
-                memeMenu.unlockMenu();
-
                 this._addImg(file);
-
-                console.log('Изображение выбрано:', file.name);
             } else {
                 alert('Ошибка при выборе изображения для мема');
             }
         });
 
-        const managementButtons = document.querySelectorAll('.management__item');
         Array.from(managementButtons).forEach((button, index) => {
             button.addEventListener('click', () => {
                 if (context.managementButtons[index].action === 'clear') {
@@ -46,17 +45,22 @@ class MemeCreator {
     _clear = () => {
         document.getElementById('js-add-image').classList.remove('display-none');
         document.getElementById('js-add-image').classList.add('add-image');
-        const canvas = document.getElementById('js-meme');
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const canvas = this._meme;
+        const canvasImg = this._convasImg;
+        const canvasText = this._convasText;
+
+        const ctxImg = canvasImg.getContext('2d');
+        const ctxText = canvasText.getContext('2d');
+        ctxImg.clearRect(0, 0, canvas.width, canvas.height);
+        ctxText.clearRect(0, 0, canvas.width, canvas.height);
+
         canvas.classList.add('meme-field_init');
         canvas.removeAttribute('height');
         canvas.removeAttribute('width');
     }
 
     _download = () => {
-        const canvas = document.getElementById('js-meme');
-        const ctx = canvas.getContext('2d');
+        const canvas = this._convas;
         const imageDataURL = canvas.toDataURL('image/png');
         const downloadLink = document.createElement('a');
         downloadLink.href = imageDataURL;
@@ -67,7 +71,12 @@ class MemeCreator {
     }
 
     _addImg = (file) => {
-        const canvas = document.getElementById('js-meme');
+        document.getElementById('js-add-image').classList.add('display-none');
+        document.getElementById('js-add-image').classList.remove('add-image');
+        memeMenu.unlockMenu();
+
+        const meme = this._meme;
+        const canvasImg = this._convasImg;
         const reader = new FileReader();
 
         reader.onload = function(e) {
@@ -76,38 +85,34 @@ class MemeCreator {
 
             img.onload = () => {
                 const imgRatio = img.width / img.height;
-                const screenRatio = canvas.offsetWidth / canvas.offsetHeight;
+                const screenRatio = meme.offsetWidth / meme.offsetHeight;
 
-                console.log(imgRatio, screenRatio)
-
-                // устанавливаем новые размеры canvas в соответствии с соотношением сторон изображения
-                const maxHeight = canvas.offsetHeight;
-                const maxWidth = canvas.offsetWidth;
+                const maxHeight = meme.offsetHeight;
+                const maxWidth = meme.offsetWidth;
                 if (imgRatio > 1 && imgRatio >= screenRatio) {
-                    canvas.width = maxWidth;
-                    canvas.height = maxWidth / imgRatio;
+                    meme.width = maxWidth;
+                    meme.height = maxWidth / imgRatio;
                 } else {
-                    canvas.height = maxHeight;
-                    canvas.width = maxHeight * imgRatio;
-                    console.log(canvas.height, canvas.width)
+                    meme.height = maxHeight;
+                    meme.width = maxHeight * imgRatio;
                 }
-                canvas.classList.remove('meme-field_init');
+                meme.classList.remove('meme-field_init');
 
-                // Очищаем canvas и рисуем изображение
-                const ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                const ctx = canvasImg.getContext('2d');
+                ctx.clearRect(0, 0, meme.width, meme.height);
+                ctx.drawImage(img, 0, 0, meme.width, meme.height);
             };
         };
 
         reader.readAsDataURL(file);
     };
 
+    _addText = (coordinates, text, lastCoordinates = null) => {
+        this._textList.set(coordinates, text);
 
-
-
-    _addText = () => {
-
+        if (lastCoordinates) {
+            this._textList.delete(lastCoordinates);
+        }
     }
 
     _render = () => {
