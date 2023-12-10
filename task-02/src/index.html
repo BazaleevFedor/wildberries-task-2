@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="assets/styles/global.css">
+    <title>Meme generator</title>
+</head>
+<body>
+    <div class="title"><h2 class="title__text">Meme</h2> <h2 class="title__text color-blue">generator</h2></div>
+    <div class="meme-creator">
+        <div class="meme-menu">
+            <div>Состояния</div>
+            <div class="menu__state"></div>
+            <div>Управление</div>
+            <div class="menu__management"></div>
+        </div>
+        <canvas class="meme-field meme-field_init" id="js-meme"></canvas>
+        <div class="add-image" id="js-add-image">
+            <input type="file" class="display-none" id="js-input-img" accept="image/*">
+            <div class="add-image__text">Создайте мем из изображений JPG, GIF или PNG.</div>
+            <button class="add-image__button background-blue cursor-pointer" id="js-add-img">Загрузить картинку</button>
+        </div>
+    </div>
+    <script src="js/memeMenu.js" type="module"></script>
+    <script src="js/memeCreator.js" type="module"></script>
+</body>
+</html>
