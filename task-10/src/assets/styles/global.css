@@ -1,0 +1,277 @@
+@font-face {
+    font-family: Limelight-Regular;
+    src: url('../fonts/Limelight-Regular.ttf');
+}
+
+@font-face {
+    font-family: Comfortaa-Medium;
+    src: url('../fonts/Comfortaa-Medium.ttf');
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.display-none {
+    display: none;
+}
+
+.color-blue {
+    color: #4d90fe;
+}
+
+html, body {
+    height: calc(100% - 48px);
+}
+
+body {
+    margin: 0;
+    padding: 24px;
+
+    background: #F5F5F5;
+}
+
+.title {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 8px;
+    font-family: Limelight-Regular, sans-serif;
+}
+
+.title__text {
+    margin: 0;
+}
+
+.game {
+    display: grid;
+    grid-template-rows: 40px minmax(5%, 15%) 1fr minmax(5%, 15%) 45px;
+    gap: 8px;
+
+    margin-top: 24px;
+    height: 100%;
+}
+
+.game__settings {
+    display: grid;
+    grid-template-columns: max-content max-content max-content max-content 1fr;
+    gap: 16px;
+    margin: auto;
+
+    height: 35px;
+}
+
+.game__settings.one-player .two-player,
+.game__settings.two-player .one-player {
+    display: none;
+}
+
+.game__settings.one-player .one-player,
+.game__settings.two-player .two-player {
+    display: block;
+}
+
+.checkbox {
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    gap: 8px;
+
+    margin: auto;
+}
+
+.img1 {
+    display: block;
+}
+.img2 {
+    display: none;
+}
+.checkbox__input:checked ~ .img1 {
+    display: none;
+}
+.checkbox__input:checked ~ .img2 {
+    display: block;
+}
+
+.checkbox__input:disabled ~ .img1,
+.checkbox__input:disabled ~ .img2 {
+    opacity: 0.7;
+    cursor: auto;
+}
+
+.label__text {
+    font-family: Comfortaa-Medium, serif;
+    font-size: 14px;
+
+    margin: auto;
+}
+
+.settings__select {
+    font-family: Comfortaa-Medium, serif;
+    font-size: 12px;
+    height: 100%;
+    border: none;
+    background: #FFFFFF;
+    border-radius: 8px;
+    padding: 0 10px 0 10px;
+    cursor: pointer;
+}
+
+.settings__size {
+    font-family: Comfortaa-Medium, serif;
+    font-size: 12px;
+    height: 100%;
+    width: 100px;
+    border: none;
+    background: #FFFFFF;
+    border-radius: 8px;
+    padding: 0 10px 0 10px;
+}
+
+.settings__start {
+    text-align: center;
+    font-family: Comfortaa-Medium, serif;
+    font-size: 16px;
+    background: #4d90fe;
+    color: #FFFFFF;
+    width: 150px;
+    height: 35px;
+    border-radius: 8px;
+    border: none;
+    padding: 0;
+}
+
+.select__item {
+    border-radius: 4px;
+    border: none;
+}
+
+input:disabled,
+select:disabled,
+button:disabled {
+    opacity: 0.7;
+    cursor: auto;
+}
+
+.game__info {
+    font-family: Comfortaa-Medium, serif;
+    font-size: 20px;
+    text-align: center;
+    margin-top: auto;
+}
+
+.game__field {
+    width: 400px;
+    height: 400px;
+    margin: auto;
+
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+
+    position: relative;
+}
+
+.field__item {
+    background: #FFFFFF;
+    border-radius: 8px;
+    position: relative;
+}
+
+.field__item:hover {
+    opacity: 0.5;
+}
+
+.game__result {
+    font-family: Comfortaa-Medium, serif;
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: auto;
+}
+
+.cross-line {
+    position: absolute;
+    width: 100%;
+    height: 10px;
+
+    background-color: #FFFFFF;
+    border: 2px solid #4d90fe;
+    border-radius: 3px;
+
+    transform-origin: center;
+}
+
+.cross-line-1 {
+    transform: rotate(45deg);
+    top: calc(50% - 5px);
+}
+
+.cross-line-2 {
+    transform: rotate(-45deg);
+    top: calc(50% - 5px);
+}
+
+.end-line {
+
+}
+
+.circle-line {
+    position: absolute;
+
+    background-color: #FFFFFF;
+    border: 2px solid #4d90fe;
+    border-radius: 50%;
+
+    transform-origin: center;
+}
+
+.circle-line-1 {
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 80%;
+}
+
+.circle-line-2 {
+    top: 17.5%;
+    left: 17.5%;
+    width: 65%;
+    height: 65%;
+}
+
+
+
+.game__restart {
+    display: grid;
+    grid-template-columns: 1fr max-content;
+
+    height: max-content;
+    width: max-content;
+    margin-top: auto;
+    margin-left: auto;
+}
+
+.restart__text {
+    text-align: right;
+    margin-bottom: auto;
+    margin-top: auto;
+
+    font-family: Comfortaa-Medium, serif;
+}
+
+.restart__icon {
+    width: 40px;
+    height: 40px;
+    margin-left: 8px;
+    transition: transform 0.5s ease-in-out;
+}
+
+.game__restart:hover .restart__icon {
+    transform: rotate(360deg);
+}
+
+button {
+    background: none;
+    border: none;
+    padding: 0;
+}

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="assets/styles/global.css">
+    <title>Tic Tac Toe</title>
+</head>
+<body>
+    <div class="title"><h2 class="title__text">Tic Tac</h2> <h2 class="title__text color-blue">Toe</h2></div>
+    <div class="game">
+        <div class="game__settings one-player">
+            <label class="checkbox">
+                <span class="label__text" id="js-opponent-title">Играть с компьютером</span>
+                <input type="checkbox" class="checkbox__input display-none js-disabled" checked id="js-opponent">
+                <img class="img1 cursor-pointer" src="assets/img/checkbox.svg" alt="checkbox_choose">
+                <img class="img2 cursor-pointer" src="assets/img/checkbox_choose.svg" alt="checkbox">
+            </label>
+
+            <label class="two-player">
+                <span class="label__text">Имя первого игрока:</span>
+                <input class="settings__size js-disabled" value="" id="js-first-player-name">
+            </label>
+
+            <label class="two-player">
+                <span class="label__text">Имя второго игрока:</span>
+                <input class="settings__size js-disabled" value="" id="js-second-player-name">
+            </label>
+
+            <label class="one-player">
+                <span class="label__text">Сложность:</span>
+                <select class="settings__select js-disabled" id="js-difficulty">
+                    <option class="select__item" value="easy">Легко</option>
+                    <option class="select__item" selected value="hard">Сложно</option>
+                </select>
+            </label>
+
+            <button class="settings__start cursor-pointer js-disabled" id="js-start-button">Играть</button>
+        </div>
+
+        <div class="game__info" id="js-move-info"></div>
+
+        <div class="game__field">
+            <div class="field__item" id="js-0"></div>
+            <div class="field__item" id="js-1"></div>
+            <div class="field__item" id="js-2"></div>
+            <div class="field__item" id="js-3"></div>
+            <div class="field__item" id="js-4"></div>
+            <div class="field__item" id="js-5"></div>
+            <div class="field__item" id="js-6"></div>
+            <div class="field__item" id="js-7"></div>
+            <div class="field__item" id="js-8"></div>
+            <div class="cross-line" id="js-line-end-game" style="display: none"></div>
+        </div>
+
+        <div class="game__result" id="js-game-result"></div>
+
+        <label class="game__restart cursor-pointer" id="js-restart">
+            <span class="restart__text">Начать заново</span>
+            <button>
+                <img class="restart__icon cursor-pointer" src="assets/img/restart.png" alt="restart">
+            </button>
+        </label>
+    </div>
+    <script src="js/Game.js" type="module"></script>
+</body>
+</html>
