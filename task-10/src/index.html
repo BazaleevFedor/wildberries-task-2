@@ -11,10 +11,10 @@
 <body>
     <div class="title"><h2 class="title__text">Tic Tac</h2> <h2 class="title__text color-blue">Toe</h2></div>
     <div class="game">
-        <div class="game__settings one-player">
+        <div class="game__settings two-player">
             <label class="checkbox">
                 <span class="label__text" id="js-opponent-title">Играть с компьютером</span>
-                <input type="checkbox" class="checkbox__input display-none js-disabled" checked id="js-opponent">
+                <input type="checkbox" class="checkbox__input display-none js-disabled" id="js-opponent">
                 <img class="img1 cursor-pointer" src="assets/img/checkbox.svg" alt="checkbox_choose">
                 <img class="img2 cursor-pointer" src="assets/img/checkbox_choose.svg" alt="checkbox">
             </label>
@@ -32,8 +32,8 @@
             <label class="one-player">
                 <span class="label__text">Сложность:</span>
                 <select class="settings__select js-disabled" id="js-difficulty">
-                    <option class="select__item" value="easy">Легко</option>
-                    <option class="select__item" selected value="hard">Сложно</option>
+                    <option class="select__item" selected value="easy">Легко</option>
+                    <option class="select__item" value="hard">Сложно</option>
                 </select>
             </label>
 
