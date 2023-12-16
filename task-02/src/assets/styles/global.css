@@ -8,6 +8,21 @@
     src: url('../fonts/Comfortaa-Medium.ttf');
 }
 
+@font-face {
+    font-family: 'Impact';
+    src: url('../fonts/Impact-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Comic Sans MS';
+    src: url('../fonts/Comic Sans MS-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Arial';
+    src: url('../fonts/Arial-Regular.ttf');
+}
+
 .cursor-pointer {
     cursor: pointer;
 }
@@ -130,24 +145,11 @@ body {
     overflow: hidden;
 }
 
-.meme-field {
+.meme-layer {
     grid-column: 2;
-
-    background: #FFFFFF;
     border-radius: 12px;
 
     position: absolute;
-    overflow-clip-margin: content-box;
-    overflow: clip;
-}
-
-.canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 100%;
 }
 
 .meme-field_init {
@@ -155,13 +157,71 @@ body {
     height: 100%;
 }
 
-.add-image {
-    display: grid;
+.edit-text-container {
     grid-column: 2;
     position: absolute;
+    display: none;
+    border: 2px dotted #000;
 
-    top: 40%;
+    z-index: 2;
+}
+
+.edit-text {
+    position: absolute;
+    overflow: visible;
+    word-wrap: break-word;
+    white-space: pre-wrap;
     width: 100%;
+    height: 100%;
+}
+
+
+.edit-text:focus {
+    cursor: text;
+    outline: none;
+}
+
+.style-panel {
+    position: absolute;
+    top: -39px;
+    right: 0;
+    display: flex;
+    flex-direction: row;
+    background-color: #F5F5F5;
+    gap: 8px;
+    padding: 4px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    z-index: 1000;
+
+    font-family: Comfortaa-Medium, sans-serif;
+    font-size: 12px;
+}
+
+.select__item {
+    font-family: Comfortaa-Medium, sans-serif;
+    font-size: 12px;
+}
+
+.style-panel label {
+    margin: auto;
+}
+
+
+.add-image {
+    grid-column: 2;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    border-radius: 12px;
+    background: #FFFFFF;
+
+    z-index: 2;
 }
 
 .add-image__text {
@@ -180,6 +240,4 @@ body {
     padding: 16px;
     border-radius: 12px;
     font-size: 15px;
-
-    margin: auto;
 }

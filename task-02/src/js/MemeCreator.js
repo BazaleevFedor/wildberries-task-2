@@ -1,20 +1,28 @@
 import memeMenu from "./memeMenu.js";
 import {context} from "./context.js";
+import CanvasPicture from "./CanvasPicture.js";
+import CanvasText from "./CanvasText.js";
 
 class MemeCreator {
     constructor() {
-        this._render();
-        this._canvasImg = document.getElementById('js-meme-img');
-        this._canvasText = document.getElementById('js-meme-text');
-        this.tmp = document.querySelector('.meme-creator');
-        this._addListeners();
+        this._canvasPicture = new CanvasPicture('js-meme-img');
+        this._canvasText = new CanvasText('js-meme-text');
+        this._menu = new memeMenu();
 
-        this._offsetLeft = this._canvasImg.offsetLeft + this.tmp.offsetLeft;
-        this._offsetTop = this._canvasImg.offsetTop + this.tmp.offsetTop;
+        document.addEventListener('DOMContentLoaded', () => {
+            this._canvasTextElem = document.getElementById('js-meme-text');
+            this._render();
+            this._addListeners();
+
+            const memeCreator = document.getElementById('js-meme-creator');
+            const image = document.getElementById('js-add-image');
+            this._offsetLeft = image.offsetLeft + memeCreator.offsetLeft;
+            this._offsetTop = image.offsetTop + memeCreator.offsetTop;
+        });
     }
 
     _addListeners = () => {
-        const addImgButton = document.getElementById('js-add-img');
+        const addImgButton = document.getElementById('js-add-image-button');
         const addImgInput = document.getElementById('js-input-img');
         const managementButtons = document.querySelectorAll('.management__item');
 
@@ -25,8 +33,8 @@ class MemeCreator {
         const sizeSelect = document.getElementById('js-size-select');
         const fontSelect = document.getElementById('js-font-select');
 
-        let textList = [];
         let curText = null;
+        let curState = null;
 
         addImgButton.addEventListener('click', () => {
             addImgInput.click();
@@ -45,7 +53,6 @@ class MemeCreator {
             button.addEventListener('click', () => {
                 if (context.managementButtons[index].action === 'clear') {
                     this._clear();
-                    textList = [];
                     curText = null;
                 } else if (context.managementButtons[index].action === 'download') {
                     this._download();
@@ -53,92 +60,121 @@ class MemeCreator {
             });
         });
 
-        this._canvasText.addEventListener('mousedown', (event) => {
-            if (memeMenu.getCurAction() === 'text' && !curText) {
+        this._canvasTextElem.addEventListener('mousedown', (event) => {
+            if (this._menu.getCurAction() === 'text' && curText === null) {
+                curState = 'createText';
                 curText = {
-                    x1: event.clientX - this._offsetLeft, y1: event.clientY - this._offsetTop,
-                    x2: 0, y2: 0,
+                    x1: event.clientX - this._offsetLeft, y1: event.clientY - this._offsetTop, x2: event.clientX - this._offsetLeft, y2: event.clientY - this._offsetTop,
                     styles: {fontSize: sizeSelect.value, fontFamily: fontSelect.value, color: colorSelect.value},
-                    isChangingOutline: true,
                 };
+
+                stylePanel.style.display = 'none';
+                editContainer.style.display = 'block';
+                editContainer.style.pointerEvents = 'none';
+                this._setElemSize(editContainer, curText);
+            } else if (this._menu.getCurAction() === 'move' && curText === null) {
+                curText = this._canvasText.findElem(event.clientX - this._offsetLeft, event.clientY - this._offsetTop);
+
+                if (curText) {
+                    curState = 'editText';
+                    stylePanel.style.display = 'flex';
+                    editContainer.style.display = 'block';
+                    editContainer.style.pointerEvents = 'none';
+                    this._setElemSize(editContainer, curText);
+                    this._setElemStyle(editText, colorSelect.value, sizeSelect.value, fontSelect.value);
+                    editText.innerText = curText.text;
+                    editText.focus();
+                }
             } else {
                 focusout();
             }
         });
 
         let isCall = false;
-        this._canvasText.addEventListener('mousemove', (event) => {
+        this._canvasTextElem.addEventListener('mousemove', (event) => {
             if (!isCall) {
                 isCall = true;
-                if (memeMenu.getCurAction() === 'text' && curText && curText.isChangingOutline) {
+                if (this._menu.getCurAction() === 'text' && curText && curState === 'createText') {
                     curText.x2 = event.clientX - this._offsetLeft;
                     curText.y2 = event.clientY - this._offsetTop;
-                    this._rerenderTextCanvas(textList, curText);
+
+                    this._setElemSize(editContainer, curText);
                 }
                 setTimeout(() => isCall = false, 100);
             }
         });
 
-        this._canvasText.addEventListener('mouseup', (event) => {
-            if (memeMenu.getCurAction() === 'text' && curText && curText.isChangingOutline) {
+        this._canvasTextElem.addEventListener('mouseup', (event) => {
+            if (this._menu.getCurAction() === 'text' && curText) {
                 curText.x2 = event.clientX - this._offsetLeft;
                 curText.y2 = event.clientY - this._offsetTop;
+                [curText.x1, curText.x2] = [Math.min(curText.x1, curText.x2), Math.max(curText.x1, curText.x2)];
+                [curText.y1, curText.y2] = [Math.min(curText.y1, curText.y2), Math.max(curText.y1, curText.y2)];
 
                 if (curText.x1 === curText.x2 || curText.y1 === curText.y2) {
-                    curText = null;
+                    focusout();
                     return;
                 }
 
-                if (curText.x1 > curText.x2) {
-                    const tmp = curText.x1;
-                    curText.x1 = curText.x2;
-                    curText.x2 = tmp;
-                }
-
-                if (curText.y1 > curText.y2) {
-                    const tmp = curText.y1;
-                    curText.y1 = curText.y2;
-                    curText.y2 = tmp;
-                }
-
-                curText.isChangingOutline = false;
-
-                this._rerenderTextCanvas(textList, curText);
-
-                editContainer.style.display = 'block';
-                editContainer.style.width = `${curText.x2 - curText.x1}px`;
-                editContainer.style.height = `${curText.y2 - curText.y1}px`;
-                editContainer.style.left = `${curText.x1}px`;
-                editContainer.style.top = `${curText.y1}px`;
-
-                editText.style.color = colorSelect.value;
-                editText.style.fontSize = sizeSelect.value + 'px';
-                editText.style.fontFamily = fontSelect.value;
+                curState = 'editText';
+                stylePanel.style.display = 'flex';
+                editContainer.style.pointerEvents = 'auto';
+                this._setElemSize(editContainer, curText);
+                this._setElemStyle(editText, colorSelect.value, sizeSelect.value, fontSelect.value);
                 editText.innerText = 'Введите тут ваш текст';
                 editText.focus();
             }
         });
 
-        this._canvasText.addEventListener('mouseleave', () => {
-            // Дополнительная проверка, чтобы избежать проблемы, если мышь покидает область canvas во время рисования
-            if (memeMenu.getCurAction() === 'text' && curText && curText.isChangingOutline) {
-                curText = null;
-                this._rerenderTextCanvas(textList, curText);
+        editText.addEventListener('mousemove', (event) => {
+            if (this._isBorder(curText, event.clientX - this._offsetLeft, event.clientY - this._offsetTop)) {
+                editText.style.cursor = this._isBorder(curText, event.clientX - this._offsetLeft, event.clientY - this._offsetTop);
+            } else {
+                console.log(11)
+                editText.style.cursor = 'auto';
             }
         });
+
+        editText.addEventListener('mousedown', (event) => {
+            if (this._isBorder(curText, event.clientX - this._offsetLeft, event.clientY - this._offsetTop) === 'move') {
+                curState = {x: event.clientX, y: event.clientY}
+            } else {
+                curState = 'resize';
+            }
+        });
+
+        editText.addEventListener('mousemove', (event) => {
+            if (curState === 'resize') {
+                curState = 'resize'
+            } else {
+                let deltaX = event.clientX - curState.x, deltaY = event.clientY - curState.y;
+                curText.x1 += deltaX;
+                curText.x2 += deltaX;
+                curText.y1 += deltaY;
+                curText.y2 += deltaY;
+                this._setElemSize(editContainer, curText);
+            }
+        });
+
+
 
         stylePanel.addEventListener('click', (event) => {
             event.stopPropagation();
         });
 
         const focusout = () => {
-            if (editText.innerText) {
+            if (editText.innerText || curText.index >= 0) {
                 curText.text = editText.innerText;
-                textList.push(curText);
+                editText.innerText = '';
+                if (curText.index >= 0) {
+                    this._canvasText.editElem(curText);
+                } else {
+                    this._canvasText.addElem(curText);
+                }
             }
             curText = null;
-            this._rerenderTextCanvas(textList, curText);
             editContainer.style.display = 'none';
+            curState = 'none';
         }
 
         colorSelect?.addEventListener('change', () => {
@@ -155,130 +191,76 @@ class MemeCreator {
         });
     }
 
-    _rerenderTextCanvas = (textList, curText) => {
-        const canvasText = document.getElementById('js-meme-text');
-        const ctxText = canvasText.getContext('2d');
-
-        ctxText.clearRect(0, 0, canvasText.width, canvasText.height);
-
-        if (curText) {
-            ctxText.beginPath();
-            ctxText.setLineDash([5, 5]);
-            ctxText.moveTo(curText.x1, curText.y1);
-            ctxText.rect(curText.x1, curText.y1, curText.x2 - curText.x1, curText.y2 - curText.y1);
-            ctxText.closePath();
-            ctxText.stroke();
-        }
-
-        textList.forEach((text) => {
-            this._wrapText(ctxText, text);
-        });
-    }
-
-    _wrapText = (ctx, text) => {
-        ctx.font = `${text.styles.fontSize}px ${text.styles.fontFamily}`;
-        ctx.fillStyle = text.styles.color;
-
-        const maxWidth = text.x2 - text.x1;
-        let row = [];
-        let curX = text.x1;
-        const metrics = ctx.measureText(text.text);
-        const fontHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
-        const actualHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
-
-        let curY = text.y1 + actualHeight;
-
-        text.text.split(' ').forEach((word) => {
-            row.push(word);
-            if (ctx.measureText(row.join(' ')).width > maxWidth) {
-                if (row.length > 1) {
-                    row.pop();
-                    ctx.fillText(row.join(' '), curX, curY);
-                    row = [word];
-                } else {
-                    ctx.fillText(row.join(' '), curX, curY);
-                    row = [];
-                }
-
-                curY += fontHeight;
-            }
-
-        });
-
-        if (row.length) {
-            ctx.fillText(row.join(' '), curX, curY);
-        }
-    }
-
     _clear = () => {
         document.getElementById('js-add-image').style.display = 'flex';
-        const canvasImg = this._canvasImg;
-        const canvasText = this._canvasText;
-
-        const ctxImg = canvasImg.getContext('2d');
-        const ctxText = canvasImg.getContext('2d');
-        ctxImg.clearRect(0, 0, canvasImg.width, canvasImg.height);
-        ctxText.clearRect(0, 0, canvasText.width, canvasText.height);
-
-        canvasImg.classList.add('meme-field_init');
-        canvasText.classList.add('meme-field_init');
+        this._canvasPicture.delete();
+        this._canvasText.delete();
     }
 
     _download = () => {
 
     }
 
+    _isBorder = ({x1, x2, y1, y2}, x, y) => {
+        const eps = 5;
+        if (Math.abs(x - x1) < eps && Math.abs(y - y1) < eps) return 'nwse-resize';
+        if (Math.abs(x - x2) < eps && Math.abs(y - y1) < eps) return 'nesw-resize';
+        if (Math.abs(x - x1) < eps && Math.abs(y - y2) < eps) return 'nesw-resize';
+        if (Math.abs(x - x2) < eps && Math.abs(y - y2) < eps) return 'nwse-resize';
+        if (Math.abs(y - y2) < eps) return 'move';
+        if (Math.abs(y - y1) < eps) return 'move';
+        if (Math.abs(x - x2) < eps) return 'move';
+        if (Math.abs(x - x1) < eps) return 'move';
+        return null;
+    }
+
+    _isInside = ({x1, x2, y1, y2}, x, y) => {
+        return x >= x1 && x <= x2 && y >= y1 && y <= y2;
+    }
+
+    _setElemSize = (elem, {x1, x2, y1, y2}) => {
+        elem.style.width = `${x2 - x1}px`;
+        elem.style.height = `${y2 - y1}px`;
+        elem.style.left = `${x1}px`;
+        elem.style.top = `${y1}px`;
+    }
+
+    _setElemStyle = (elem, color, size, font) => {
+        elem.style.color = color;
+        elem.style.fontSize = size + 'px';
+        elem.style.fontFamily = font;
+    }
+
     _addImg = (file) => {
-        document.getElementById('js-add-image').style.display = 'none';
-        memeMenu.unlockMenu();
-
-        const canvasImg = this._canvasImg;
-        const canvasText = this._canvasText;
         const reader = new FileReader();
-
-        reader.onload = function(e) {
+        reader.onload = (e) => {
             const img = new Image();
             img.src = e.target.result;
 
             img.onload = () => {
+                const maxHeight = document.getElementById('js-add-image').offsetHeight;
+                const maxWidth = document.getElementById('js-add-image').offsetWidth;
                 const imgRatio = img.width / img.height;
-                const screenRatio = canvasImg.offsetWidth / canvasImg.offsetHeight;
 
-                const maxHeight = canvasImg.offsetHeight;
-                const maxWidth = canvasImg.offsetWidth;
-
-                if (imgRatio > 1 && imgRatio >= screenRatio) {
-                    canvasImg.width = maxWidth;
-                    canvasText.width = maxWidth;
-                    canvasImg.height = maxWidth / imgRatio;
-                    canvasText.height = maxWidth / imgRatio;
+                let newWidth, newHeight;
+                if (imgRatio > 1 && imgRatio >= maxWidth / maxHeight) {
+                    newWidth = maxWidth;
+                    newHeight = maxWidth / imgRatio;
                 } else {
-                    canvasImg.height = maxHeight;
-                    canvasText.height = maxHeight;
-                    canvasImg.width = maxHeight * imgRatio;
-                    canvasText.width = maxHeight * imgRatio;
+                    newHeight = maxHeight;
+                    newWidth = maxHeight * imgRatio;
                 }
-                canvasImg.classList.remove('meme-field_init');
-                canvasText.classList.remove('meme-field_init');
 
-                const ctxImg = canvasImg.getContext('2d');
-                const ctxText = canvasImg.getContext('2d');
-                ctxImg.clearRect(0, 0, canvasImg.width, canvasImg.height);
-                ctxText.clearRect(0, 0, canvasText.width, canvasText.height);
-                ctxImg.drawImage(img, 0, 0, canvasImg.width, canvasImg.height);
+                this._canvasPicture.changeSize(newWidth, newHeight);
+                this._canvasText.changeSize(newWidth, newHeight);
+                this._canvasPicture.addElem(img);
+                document.getElementById('js-add-image').style.display = 'none';
+                this._menu.unlockMenu();
             };
         };
 
         reader.readAsDataURL(file);
     };
-
-    _addText = (coordinates, text, lastCoordinates = null) => {
-        this._textList.set(coordinates, text);
-
-        if (lastCoordinates) {
-            this._textList.delete(lastCoordinates);
-        }
-    }
 
     _render = () => {
         const memeMenuElem = document.querySelector('.menu__management');

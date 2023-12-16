@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="assets/styles/global.css">
+    <title>Sorting visualization</title>
+</head>
+<body>
+    <div class="title"><h2 class="title__text">Sorting</h2> <h2 class="title__text color-blue">visualization</h2></div>
+    <div class="visualizer">
+        <div class="visualizer__settings">
+            <label>
+                <span class="label__text">Массив:</span>
+                <select class="settings__select" id="js-select-array-type">
+                    <option class="select__item" selected value="size">Рандомный</option>
+                    <option class="select__item" value="array">Пользовательский</option>
+                </select>
+            </label>
+
+            <label>
+                <span class="label__text" id="js-array-title">Размер массива:</span>
+                <input class="settings__size" id="js-array-input" value="10">
+            </label>
+
+            <label>
+                <span class="label__text">Алгоритм:</span>
+                <select class="settings__select" id="js-select-alg"></select>
+            </label>
+
+            <label>
+                <span class="label__text">Скорость:</span>
+                <select class="settings__select" id="js-select-speed"></select>
+            </label>
+        </div>
+        <div class="visualizer__info">
+            <div class="settings__error" id="js-error"></div>
+
+            <button class="settings__start cursor-pointer" id="js-start-button">Старт</button>
+            <button class="settings__start cursor-pointer" style="display: none" id="js-pause-button">Пауза</button>
+            <button class="settings__start cursor-pointer" style="display: none" id="js-resume-button">Продолжить</button>
+            <button class="settings__start cursor-pointer" disabled id="js-reset-button">Сбросить</button>
+        </div>
+        <div class="visualizer__statistics" style="display: none" id="js-statistics">
+            <label>
+                <span class="label__text">Время сортировки:</span>
+                <span id="js-time"></span>
+            </label>
+
+            <label>
+                <span class="label__text">Итераций:</span>
+                <span id="js-iterations"></span>
+            </label>
+        </div>
+        <div class="visualizer__sort" id="js-visualizer"></div>
+    </div>
+    <script src="js/Visualizer.js" type="module"></script>
+</body>
+</html>

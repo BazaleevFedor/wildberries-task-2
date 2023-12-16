@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="assets/styles/global.css">
+    <title>Guess number</title>
+</head>
+<body>
+    <div class="title"><h2 class="title__text">Guess</h2> <h2 class="title__text color-blue">number</h2></div>
+    <div class="game" id="js-game">
+        <div class="game__bound">
+            <span class="bound__title">Загадывать число</span>
+
+            <label>
+                <span class="bound__text">от:</span>
+                <input class="bound__input" value="1" id="js-bound-min">
+            </label>
+
+            <label>
+                <span class="bound__text">до:</span>
+                <input class="bound__input" value="100" id="js-bound-max">
+            </label>
+        </div>
+
+        <div class="game__input">
+            <input class="input__number" disabled id="js-input">
+            <button class="input__hint">
+                <img class="hint__img" src="assets/img/hintOff.png" alt="hint"  id="js-hint-off">
+                <img class="hint__img hint-on cursor-pointer" style="display: none" src="assets/img/hintOn.png" alt="hint" id="js-hint-on">
+                <span class="hint" id="js-hint-text"></span>
+            </button>
+        </div>
+
+        <div class="game__under-input">
+            <div class="game__move-result" id="js-move-result"></div>
+            <div class="game__move-result" style="display: none" id="js-error"></div>
+            <button class="game__start cursor-pointer" id="js-start-game">Играть</button>
+            <button class="game__start cursor-pointer" style="display: none" id="js-send-num">Отправить число</button>
+        </div>
+
+        <div class="game__counter">
+            <div class="counter__title" id="js-counter-title"></div>
+            <div class="counter__number" id="js-counter"></div>
+        </div>
+
+        <label class="game__restart cursor-pointer" id="js-restart">
+            <span class="restart__text">Начать заново</span>
+            <button>
+                <img class="restart__icon cursor-pointer" src="assets/img/restart.png" alt="restart">
+            </button>
+        </label>
+    </div>
+    <script src="js/Game.js" type="module"></script>
+</body>
+</html>

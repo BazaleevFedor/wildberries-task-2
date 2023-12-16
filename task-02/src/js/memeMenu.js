@@ -1,6 +1,6 @@
 import {context} from "./context.js";
 
-class MemeMenu {
+export default class MemeMenu {
     constructor() {
         this._render();
         this._menuButtons = Array.from(document.querySelectorAll('.state__item'));
@@ -8,7 +8,7 @@ class MemeMenu {
     }
 
     getCurAction = () => {
-        return this._chooseButtonID ? context.menuButtons[this._chooseButtonID].action : null;
+        return this._chooseButtonID !== null ? context.menuButtons[this._chooseButtonID].action : null;
     }
 
     unlockMenu = () => {
@@ -50,5 +50,3 @@ class MemeMenu {
         });
     }
 }
-
-export default new MemeMenu();
