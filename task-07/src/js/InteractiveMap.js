@@ -78,7 +78,6 @@ class InteractiveMap {
             const markers = JSON.parse(localStorage.markers);
             markers.forEach((settings) => {
                 this._curId ++;
-                console.log(settings)
                 this._addMarker(null, settings);
             });
         }

@@ -15,8 +15,5 @@
     "url": "https://github.com/BazaleevFedor/wildberries-task-2/issues"
   },
   "homepage": "https://github.com/BazaleevFedor/wildberries-task-2/tree/main/task-07#readme",
-  "description": "",
-  "dependencies": {
-    "leaflet": "^1.9.4"
-  }
+  "description": ""
 }
