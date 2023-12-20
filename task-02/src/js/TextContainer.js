@@ -24,6 +24,11 @@ export class TextContainer {
         this._addListeners();
     }
 
+    /**
+     * Создание нового текста по абсолютным координатам
+     * @param x
+     * @param y
+     */
     addNewElem = (x, y) => {
         const newElemInfo = JSON.parse(JSON.stringify(context.defaultElem));
         newElemInfo.id = this._texts.length
@@ -34,6 +39,9 @@ export class TextContainer {
         this._addEditElem(newElemInfo);
     }
 
+    /**
+     * Удаление текста с мема
+     */
     clear = () => {
         this._container.innerHTML = '';
         this._texts = [];
@@ -41,6 +49,11 @@ export class TextContainer {
         this._editText = null;
     }
 
+    /**
+     * Открывание панели редактирования текста
+     * @param elemInfo
+     * @private
+     */
     _addEditElem = (elemInfo) => {
         this._editElem = document.getElementById('js-edit-text-container');
         this._editElem.style.display = 'grid';
@@ -48,6 +61,11 @@ export class TextContainer {
         this._setStyleEditElem(elemInfo);
     }
 
+    /**
+     * Сохранение изменений текста.
+     * @param elemInfo
+     * @private
+     */
     _saveElem = (elemInfo) => {
         this._removeEditElem();
         this._editText = null;
@@ -110,6 +128,10 @@ export class TextContainer {
             this._editText.text = this._editTextElem.innerText;
         });
 
+        /**
+         * Перемещение контейнера.
+         * @param event
+         */
         this._editElem.firstElementChild.onmousedown = (event) => {
             const startX = event.clientX;
             const startY = event.clientY;
@@ -151,6 +173,10 @@ export class TextContainer {
             return false;
         };
 
+        /**
+         * Изменение размеров контейнера.
+         * @param event
+         */
         this._resizeElem.onmousedown = (event) => {
             const startX = event.clientX;
             const startY = event.clientY;
