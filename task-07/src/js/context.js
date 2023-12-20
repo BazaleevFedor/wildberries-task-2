@@ -7,7 +7,7 @@ export const context = {
         work: '<svg width="30" height="25" viewBox="0 0 30 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M0 13.6324C3.76265 15.0962 7.73341 15.9549 11.7647 16.1765V19.1176H17.6471V16.1765C21.6686 15.9246 25.6319 15.0874 29.4118 13.6912V25H0V13.6324ZM19.1176 0L20.5882 1.47059V4.41176H29.4118V12.0735C24.9027 13.7571 20.1363 14.6476 15.3235 14.7059H14.2647C9.38734 14.6532 4.55786 13.7371 0 12V4.41176H8.82353V1.47059L10.2941 0H19.1176ZM17.6471 2.94118H11.7647V4.41176H17.6471V2.94118Z" fill="#4D90FE"/></svg>',
     },
     defaultColor: DEFAULT_COLOR,
-    defaultSettings: {title: 'Название', type: 'marker', description: 'ОписаниеОписаниеОписание', color: DEFAULT_COLOR},
+    defaultSettings: {title: 'Название', type: 'marker', description: 'Описание', color: DEFAULT_COLOR},
     startPosition: [53.1444, 29.2296],
     startZoom: 13,
 }

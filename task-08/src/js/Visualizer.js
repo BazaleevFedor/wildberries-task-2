@@ -37,17 +37,28 @@ class Visualizer {
         this._sort =  Sort[this._algSelectElem.value](this._array, this._selectElem, this._swapElem, this._incCounter, this._stop);
     }
 
+    /**
+     * Пауза сортировки
+     * @private
+     */
     _pause = () => {
         this._timer.pause();
         this._sort.pause();
     }
 
+    /**
+     * Возобновление сортировки
+     * @private
+     */
     _resume = () => {
         this._timer.begin();
         this._sort.begin();
-
     }
 
+    /**
+     * Завершение сортировки
+     * @private
+     */
     _stop = () => {
         this._timer.pause();
         this._deactivateElem(this._pauseElem);
@@ -57,6 +68,13 @@ class Visualizer {
         this._resumeElem.style.display = 'none';
     }
 
+    /**
+     * Получение массива по параметрам
+     * @param type - тип (генерация или парсинг)
+     * @param arrayInfo
+     * @return {*}
+     * @private
+     */
     _getArray = (type, arrayInfo) => {
         if (type === 'size') {
             let array = Array.from({ length: arrayInfo }, (v, i) =>  i + 1);
@@ -66,6 +84,12 @@ class Visualizer {
         return JSON.parse(arrayInfo);
     }
 
+    /**
+     * Произвольное перетасовывание массива
+     * @param array
+     * @return {*}
+     * @private
+     */
     _shuffle = (array) => {
         let m = array.length, t, i;
 
@@ -79,6 +103,13 @@ class Visualizer {
         return array;
     }
 
+    /**
+     * Таймер выполнения сортировки
+     * @param timerElem
+     * @param delay
+     * @return {{begin: begin, pause: (function(): void)}}
+     * @private
+     */
     _startTimer = (timerElem, delay) => {
         let time = new Date(0);
         let timer;
@@ -133,6 +164,14 @@ class Visualizer {
         }
     }
 
+    /**
+     * Выделение или снятие выделения двух элементов по id
+     * @param id1
+     * @param id2
+     * @param isDelay
+     * @return {Promise<void>}
+     * @private
+     */
     _selectElem = async (id1, id2 = null, isDelay = true) => {
         const column1 = document.querySelector(`.sort__column[data-id="${id1}"]`);
         const column2 = document.querySelector(`.sort__column[data-id="${id2}"]`);
@@ -142,6 +181,14 @@ class Visualizer {
         if (isDelay) await new Promise(resolve => setTimeout(resolve, Number(this._speedSelectElem.value)));
     }
 
+    /**
+     * Переставление двух элементов по id с задержкой
+     * @param id1
+     * @param id2
+     * @param isDelay
+     * @return {Promise<void>}
+     * @private
+     */
     _swapElem = async (id1, id2, isDelay = true) => {
         const column1 = document.querySelector(`.sort__column[data-id="${id1}"]`);
         const column2 = document.querySelector(`.sort__column[data-id="${id2}"]`);
@@ -172,14 +219,12 @@ class Visualizer {
         this._deactivateElem(this._arrayTypeElem);
         this._deactivateElem(this._arrayInputElem);
         this._deactivateElem(this._algSelectElem);
-        this._deactivateElem(this._speedSelectElem);
     }
 
     _activateSettings = () => {
         this._activateElem(this._arrayTypeElem);
         this._activateElem(this._arrayInputElem);
         this._activateElem(this._algSelectElem);
-        this._activateElem(this._speedSelectElem);
     }
 
     _deactivateElem = (elem) => {
@@ -224,7 +269,14 @@ class Visualizer {
     }
 
     _addListeners = () => {
-        this._arrayTypeElem.addEventListener('change', () => this._arrayInputElem.dispatchEvent(new Event('input')))
+        this._arrayTypeElem.addEventListener('change', (event) => {
+            if (event.target.value === 'size') {
+                this._arrayInputTitleElem.innerText = 'Размер массива:'
+            } else {
+                this._arrayInputTitleElem.innerText = 'Массив:'
+            }
+            this._arrayInputElem.dispatchEvent(new Event('input'));
+        })
 
         this._arrayInputElem.addEventListener('input', (event) => {
             if (this._arrayTypeElem.value === 'array') {
@@ -252,19 +304,40 @@ class Visualizer {
             }
         });
 
+        let canClick = true;
+        const setCanClick = (state = true) => {
+            if (state) {
+                canClick = true;
+                this._activateElem(this._pauseElem);
+                this._activateElem(this._resumeElem);
+            } else {
+                canClick = false;
+                this._deactivateElem(this._pauseElem);
+                this._deactivateElem(this._resumeElem);
+            }
+        }
+
         this._pauseElem.addEventListener('click', () => {
-            this._startElem.style.display = 'none';
-            this._pauseElem.style.display = 'none';
-            this._resumeElem.style.display = '';
-            this._pause();
+            if (canClick) {
+                setCanClick(false);
+                this._startElem.style.display = 'none';
+                this._pauseElem.style.display = 'none';
+                this._resumeElem.style.display = '';
+                this._pause();
+                setTimeout(setCanClick, 250);
+            }
         });
 
         this._resumeElem.addEventListener('click', () => {
-            this._startElem.style.display = 'none';
-            this._pauseElem.style.display = '';
-            this._resumeElem.style.display = 'none';
-            this._resume();
-        })
+            if (canClick) {
+                setCanClick(false);
+                this._startElem.style.display = 'none';
+                this._pauseElem.style.display = '';
+                this._resumeElem.style.display = 'none';
+                this._resume();
+                setTimeout(setCanClick, 250);
+            }
+        });
 
         this._resetElem.addEventListener('click', () => {
             this._activateSettings();

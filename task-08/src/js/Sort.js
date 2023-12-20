@@ -10,12 +10,14 @@ class Sort {
                 for (let j = 0; j < array.length - 1 - i; j++) {
                     if (pause) {
                         if (pause.status) {
+                            await selectElem(j, j + 1, true);
                             pause.i = i;
                             pause.j = j;
                             return;
                         } else {
                             i = pause.i;
                             j = pause.j;
+                            await selectElem(j, j + 1, false);
                             pause = null;
                         }
                     }
@@ -46,25 +48,26 @@ class Sort {
         let pause = null;
 
         const iteration = async () => {
-            const factor = 1.247; // Фактор уменьшения
+            const factor = 1.247;  // фактор уменьшения
             let gap = Math.floor(array.length / factor);
 
             while (gap >= 1) {
                 for (let i = 0; i + gap < array.length; i++) {
-                    iterationInc();
-
                     if (pause) {
                         if (pause.status) {
                             pause.i = i;
                             pause.gap = gap;
+                            await selectElem(i, i + gap);
                             return;
                         } else {
                             i = pause.i;
                             gap = pause.gap;
+                            await selectElem(i, i + gap);
                             pause = null;
                         }
                     }
 
+                    iterationInc();
                     await selectElem(i, i + gap);
                     if (array[i] > array[i + gap]) {
                         const temp = array[i];
@@ -95,27 +98,26 @@ class Sort {
                 let j = i - 1;
                 let key = array[i];
                 if (pause) {
-                    console.log(pause);
                     if (!pause.status) {
                         key = pause.key;
                         j = pause.j;
+                        await selectElem(j, j + 1, false);
                         pause = null;
                     }
                 }
 
                 while (j >= 0 && array[j] > key) {
                     if (pause) {
-                        console.log(pause);
                         if (pause.status) {
+                            await selectElem(j, j + 1, true);
                             pause.key = key;
                             pause.j = j;
                             return;
                         }
-                        alert('err')
                     }
                     await selectElem(j, j + 1, true);
-                    array[j + 1] = array[j];
                     iterationInc();
+                    array[j + 1] = array[j];
                     await swapElem(j, j + 1);
                     await selectElem(j, j + 1, false);
                     j--;
@@ -139,42 +141,40 @@ class Sort {
 
         const iteration = async () => {
             for (let i = 0; i < array.length - 1; i++) {
-                await selectElem(i, null, false);
                 let minIndex = i;
                 for (let j = i + 1; j < array.length; j++) {
                     if (pause) {
                         if (pause.status) {
+                            await selectElem(i, j, true);
                             pause.i = i;
                             pause.minIndex = minIndex;
                             pause.j = j;
                             return;
                         } else {
-                            await selectElem(i, null, false);
                             i = pause.i;
                             minIndex = pause.minIndex;
                             j = pause.j;
+                            await selectElem(i, j, false);
                             pause = null;
                         }
                     }
-                    await selectElem(j, null, true);
+                    await selectElem(i, j, true);
                     iterationInc();
                     if (array[j] < array[minIndex]) {
                         minIndex = j;
                     }
-                    await selectElem(j, null, false);
+                    await selectElem(i, j, false);
                 }
 
+                iterationInc();
                 if (minIndex !== i) {
-                    await selectElem(minIndex, null, false);
+                    await selectElem(i, minIndex, false);
                     const temp = array[i];
                     array[i] = array[minIndex];
                     array[minIndex] = temp;
                     await swapElem(i, minIndex);
-                    await selectElem(minIndex, null, false);
-
+                    await selectElem(i, minIndex, false);
                 }
-
-                await selectElem(i, null, false);
             }
 
             stopSort();
@@ -191,7 +191,7 @@ class Sort {
         let pause = null;
 
         const partition = async (left, right) => {
-            await selectElem(right, null, true);
+            if (!pause) await selectElem(right, null, true);
             let pivot = array[right];
             let i = left - 1;
 
@@ -213,6 +213,7 @@ class Sort {
                     }
                 }
 
+                iterationInc();
                 await selectElem(j, null, true);
                 if (array[j] <= pivot) {
                     i++;
@@ -221,6 +222,7 @@ class Sort {
                 await selectElem(j, null, false)
             }
 
+            iterationInc();
             await swap(i + 1, right);
             await selectElem(right, null, false);
             return i + 1;
@@ -230,7 +232,7 @@ class Sort {
             const temp = array[i];
             array[i] = array[j];
             array[j] = temp;
-            await swapElem(i, j, false);
+            await swapElem(i, j);
         }
 
         const iteration = async () => {

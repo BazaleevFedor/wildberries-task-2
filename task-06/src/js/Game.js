@@ -33,6 +33,10 @@ class Game {
         this._addCounter(this._count);
     }
 
+    /**
+     * Обработка хода игрока
+     * @private
+     */
     _move = () => {
         this._addCounter(++this._count);
         if (this._number === Number(this._inputElem.value)) {
@@ -45,16 +49,33 @@ class Game {
         }
     }
 
+    /**
+     * Обработка победы
+     * @private
+     */
     _win = () => {
         this._addMoveResult('Угадал!');
         this._deactivateInput(this._inputElem);
         this._sendElem.classList.add('error');
     }
 
+    /**
+     * Загадывание рандомного числа в интервале
+     * @param min
+     * @param max
+     * @return {*}
+     * @private
+     */
     _getNumber = (min, max) => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
+    /**
+     * Валидация игровых границ на корректность и последовательность расположения нижней и верхней.
+     * @param minElem
+     * @param maxElem
+     * @private
+     */
     _boundValidation = (minElem, maxElem) => {
         if (minElem.value) {
             if (!/^[-\d]+$/.test(minElem.value)) {
@@ -81,12 +102,24 @@ class Game {
         }
     }
 
+    /**
+     * Проверка элемента на пустоту.
+     * @param elem
+     * @private
+     */
     _emptyValidation = (elem) => {
         if (!elem.value) {
             this._addError(elem, 'Нужно заполнить поле.');
         }
     }
 
+    /**
+     * Валидация вводимого числа на корректность и нахождение в диапазоне.
+     * @param number
+     * @param min
+     * @param max
+     * @private
+     */
     _numberValidation = (number, min, max) => {
         if (!number.value) return;
         if (!/^[-\d]+$/.test(number.value)) {

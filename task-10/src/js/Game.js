@@ -69,7 +69,8 @@ class Game {
             this._curGame.curUser = 1 - this._curGame.curUser;
 
             if (this._curGame.gameWithBot && this._curGame.curUser) {
-                this._computerRunning(this._curGame.field, this._difficultyLevelElem.value);
+                // ход компьютера с небольшой задержкой
+                setTimeout(() => this._computerRunning(this._curGame.field, this._difficultyLevelElem.value), 300);
                 return;
             }
             this._addMoveInfo();
@@ -91,6 +92,12 @@ class Game {
         this._curGame = null;
     }
 
+    /**
+     * Определение завершения игры
+     * @param arr
+     * @return {{status: string}}
+     * @private
+     */
     _isWin = (arr) => {
         let res = { status: 'draw' };
 
@@ -124,6 +131,12 @@ class Game {
         return res;
     }
 
+    /**
+     * Вычисление хода компьютера
+     * @param array
+     * @param difficulty
+     * @private
+     */
     _computerRunning = (array, difficulty) => {
         if (difficulty === 'easy') {
             let freeField = array.reduce((acc, item, index) => {
@@ -138,6 +151,13 @@ class Game {
         }
     }
 
+    /**
+     * Алгоритм поиска оптимального хода - Минимакс
+     * @param board
+     * @param player
+     * @return {{score: number}|{score: number, id: number}|{score: number, id: number}}
+     * @private
+     */
     _findMoveMiniMax = (board, player) => {
         let { status, winnerId } = this._isWin(board);
 
@@ -170,6 +190,10 @@ class Game {
         }
     };
 
+    /**
+     * Сохранение состояния в localStorage
+     * @private
+     */
     _localStorageSet = () => {
         localStorage.setItem('curGame', JSON.stringify(this._curGame));
 
@@ -183,6 +207,10 @@ class Game {
         localStorage.setItem('settings', JSON.stringify(settings));
     }
 
+    /**
+     * Выгрузка состояния из localStorage
+     * @private
+     */
     _localStorageGet = () => {
         if (localStorage.hasOwnProperty('curGame')) {
             this._curGame = JSON.parse(localStorage.getItem('curGame'));
@@ -198,7 +226,6 @@ class Game {
 
         if (localStorage.hasOwnProperty('settings')) {
             const {opponents, user1, user2, level, isActivate} = JSON.parse(localStorage.getItem('settings'));
-            console.log(JSON.parse(localStorage.getItem('settings')));
             this._chooseOpponentElem.checked = opponents;
             this._firstPlayerNameElem.value = user1;
             this._secondPlayerNameElem.value = user2;

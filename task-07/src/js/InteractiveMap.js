@@ -20,15 +20,17 @@ class InteractiveMap {
             if (localStorage.hasOwnProperty('markers')) {
                 this._localStorageGet();
             }
+
+            this._popupOpen = false;
         });
     }
 
     _filter = (text) => {
         this._markers.forEach(({marker, settings}) => {
             if (settings.description.includes(text)) {
-                marker.setOpacity(1);
+                this.markersLayer.addLayer(marker);
             } else {
-                marker.setOpacity(0);
+                this.markersLayer.removeLayer(marker);
             }
         });
     }
@@ -134,6 +136,7 @@ class InteractiveMap {
         this.markersLayer.removeLayer(marker.marker);
         this._markers.delete(id);
         this._localStorageSet();
+        this._popupOpen = false;
     }
 
     _getIcon = ({type, color}) => {
@@ -157,7 +160,11 @@ class InteractiveMap {
         });
 
         this._map.on('click', (e) => {
-            this._addMarker(e.latlng);
+            if (!this._popupOpen) {
+                this._addMarker(e.latlng);
+            } else {
+                this._popupOpen = false;
+            }
         });
 
         this._filterElem.addEventListener('click', () => this._filter(this._filterTextElem.value));
@@ -168,10 +175,12 @@ class InteractiveMap {
     }
 
     _addMarkerListeners(marker, settings) {
+        this._popupOpen = true;
         document.getElementById(`js-title-${settings.id}`)?.addEventListener('input', (e) => this._changeTitle(settings.id, e.target.value));
         document.getElementById(`js-type-${settings.id}`)?.addEventListener('change', (e) => this._changeType(settings.id, e.target.value));
         document.getElementById(`js-description-${settings.id}`)?.addEventListener('input', (e) => this._changeDescription(settings.id, e.target.value));
         document.getElementById(`js-color-${settings.id}`)?.addEventListener('change', (e) => this._changeColor(settings.id, e.target.value));
+        document.querySelector(`.leaflet-popup-close-button`)?.addEventListener('click', () => this._popupOpen = false);
 
         document.getElementById(`js-edit-marker-${settings.id}`)?.addEventListener('mouseup', () => {
             marker.bindPopup(this._getEditPopup(settings));
@@ -191,12 +200,12 @@ class InteractiveMap {
                 
                 <div>
                     <button class="info__button" id="js-edit-marker-${id}">
-                        <img class="img1 button__icon" src="../src/assets/img/edit.svg" alt="edit">
-                        <img class="img2 button__icon" src="../src/assets/img/edit_hover.svg" alt="edit">
+                        <img class="img1 button__icon" src="assets/img/edit.svg" alt="edit">
+                        <img class="img2 button__icon" src="assets/img/edit_hover.svg" alt="edit">
                     </button>
                     <button class="info__button" id="js-remove-marker-${id}">
-                        <img class="img1 button__icon" src="../src/assets/img/trash.svg" alt="trash">
-                        <img class="img2 button__icon" src="../src/assets/img/trash_hover.svg" alt="trash">
+                        <img class="img1 button__icon" src="assets/img/trash.svg" alt="trash">
+                        <img class="img2 button__icon" src="assets/img/trash_hover.svg" alt="trash">
                     </button>
                 </div>
             </div>

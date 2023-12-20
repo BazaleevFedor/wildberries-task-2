@@ -45,7 +45,8 @@ body {
 
 .visualizer {
     display: grid;
-    grid-template-rows: 5% 5% 10% 1fr;
+    grid-template-rows: 35px 35px 10% 1fr;
+    gap: 16px;
 
     margin-top: 24px;
     height: 100%;
