@@ -21,7 +21,11 @@ export default class MemeMenu {
     }
 
     blockMenu = () => {
-        [...this._buttons.stateButtons, ...this._buttons.managementButtons].forEach((elem) => elem.classList.add('item_blocked'));
+        [...this._buttons.stateButtons, ...this._buttons.managementButtons].forEach((elem) => {
+            elem.classList.add('item_blocked');
+            elem.classList.remove('state__item_choose');
+        });
+        this._chooseButtonID = null;
         this._isBlock = true;
     }
 

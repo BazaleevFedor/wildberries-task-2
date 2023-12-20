@@ -1,8 +1,6 @@
 export class Canvas {
     constructor(parentId, id) {
-        console.log(parentId, id);
         document.getElementById(parentId).innerHTML = `<canvas class="meme-layer meme-field_init" id="${ id }"></canvas>`;
-
         this._canvas = document.getElementById(id);
         this._context = this._canvas.getContext('2d');
 
