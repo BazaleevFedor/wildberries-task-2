@@ -1,6 +1,6 @@
 export const context = {
     title: 'Meme generator',
-    menuButtons: [
+    stateButtons: [
         {title: 'Перемещение', src: 'assets/img/cursor.png', action: 'move'},
         {title: 'Текст', src: 'assets/img/text.png', action: 'text'},
         /*{title: 'Карандаш', src: 'assets/img/pencil.png', action: 'pencil'},
@@ -12,7 +12,7 @@ export const context = {
         {title: 'Отчистить', src: 'assets/img/clear.png', action: 'clear'},
     ],
     fonts: [
-        {title: 'Impact'},
+        {title: 'Impact', selected: true},
         {title: 'Comic Sans MS'},
         {title: 'Arial'},
         {title: 'Montserrat'},
@@ -33,4 +33,12 @@ export const context = {
         {title: '40'},
         {title: '45'},
     ],
+    defaultElem: {
+        text: 'Ваш мемный текст',
+        font: 'Impact',
+        size: '22',
+        color: '#000000',
+        width: 200,
+        height: 50,
+    }
 }

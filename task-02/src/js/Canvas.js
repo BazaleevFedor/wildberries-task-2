@@ -1,50 +1,67 @@
 export class Canvas {
-    constructor(id) {
-        document.getElementById('js-meme-creator').innerHTML += `<canvas class="meme-layer meme-field_init" id="${id}"></canvas>`;
+    constructor(parentId, id) {
+        console.log(parentId, id);
+        document.getElementById(parentId).innerHTML = `<canvas class="meme-layer meme-field_init" id="${ id }"></canvas>`;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            this._canvas = document.getElementById(id);
-            this._context = this._canvas.getContext('2d');
-        });
+        this._canvas = document.getElementById(id);
+        this._context = this._canvas.getContext('2d');
 
-        this._history = [];
-        this._elements = [];
+        this._img = null;
     }
 
-    getElem = () => {
-        return this._canvas;
+    addMeme = (textList) => {
+        this.addImg(this._img.img, this._img.maxHeight, this._img.maxWidth);
+        this.addText(textList);
     }
 
-    addElem = (newElem) => {
-        this._elements.push(newElem);
-        this._render();
-    }
-
-    editElem = (elem) => {
-        const index = elem.index;
-
-        if (!elem.text) {
-            this._elements.splice(index, 1);
-        } else {
-            elem.index = null;
-            this._elements[index] = elem;
+    addImg = (img, maxHeight, maxWidth) => {
+        this._img = {img, maxHeight, maxWidth};
+        let width = img.width, height = img.height;
+        if (height > maxHeight) {
+            width *= maxHeight / height;
+            height = maxHeight;
         }
 
-        this._render();
+        if (width > maxWidth) {
+            height *= maxWidth / width;
+            width = maxWidth;
+        }
+
+        this.changeSize(height, width);
+        this._context.drawImage(img, 0, 0, height, width);
     }
 
-    findElem = (x, y) => {
-        console.log(this._elements)
-        for (let i = this._elements.length - 1; i >= 0; i--) {
-            const elem = this._elements[i];
-            if (x >= elem.x1 && x <= elem.x2 && y >= elem.y1 && y <= elem.y2) {
-                elem.index = i;
-                this._render();
-                return elem;
+    addText = (textList) => {
+        textList.forEach((elem) => {
+            this._context.font = `${elem.size}px ${elem.font}`;
+            this._context.fillStyle = elem.color;
+
+            const metrics = this._context.measureText(elem.text);
+            const fontHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
+            const actualHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+
+            let row = [];
+            let curX = elem.left, curY = elem.top + fontHeight;
+
+            elem.text.split(' ').forEach((word) => {
+                row.push(word);
+                if (this._context.measureText(row.join(' ')).width > elem.width) {
+                    let isPop = false;
+                    if (row.length > 1) {
+                        row.pop();
+                        isPop = true;
+                    }
+
+                    this._context.fillText(row.join(' '), curX, curY);
+                    row = isPop ? [word] : [];
+                    curY += fontHeight;
+                }
+            });
+
+            if (row.length) {
+                this._context.fillText(row.join(' '), curX, curY);
             }
-        }
-
-        return null;
+        });
     }
 
     changeSize = (width, height) => {
@@ -55,27 +72,20 @@ export class Canvas {
 
     clear = () => {
         this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
-    }
-
-    delete = () => {
-        this.clear();
-        this._elements = [];
         this._canvas.classList.add('meme-field_init');
+        this._canvas.removeAttribute('width');
+        this._canvas.removeAttribute('height');
     }
 
-    undo = () => {
-
-    }
-
-    _render() {
-        throw new Error('method _render should be overridden in the child class');
-    }
-
-    _saveState = () => {
-
-    }
-
-    _restoreState = () => {
-
+    download = () => {
+        const imageDataURL = this._canvas.toDataURL('image/png');
+        const downloadLink = document.createElement('a');
+        downloadLink.href = imageDataURL;
+        downloadLink.download = 'meme.png';
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        this.clear();
+        this.addImg(this._img.img, this._img.maxHeight, this._img.maxWidth);
     }
 }

@@ -11,28 +11,31 @@
 <body>
     <div class="title"><h2 class="title__text">Meme</h2> <h2 class="title__text color-blue">generator</h2></div>
     <div class="meme-creator" id="js-meme-creator">
-        <div class="meme-menu">
+        <div class="meme-menu" id="js-menu">
             <div>Состояния</div>
-            <div class="menu__state"></div>
+            <div class="menu__state" id="js-menu-state"></div>
             <div>Управление</div>
-            <div class="menu__management"></div>
+            <div class="menu__management"  id="js-menu-management"></div>
         </div>
-
-        <div class="edit-text-container" id="edit-text-container">
-            <div class="style-panel" id="js-style-panel">
-                <label for="js-font-select">Шрифт:</label>
-                <select id="js-font-select" class="select__item"></select>
-
-                <label for="js-size-select">Размер:</label>
-                <select id="js-size-select" class="select__item"></select>
-
-                <label for="js-color-select">Цвет:</label>
-                <input type="color" id="js-color-select">
-
-                <!-- Другие параметры стилей текста могут быть добавлены здесь -->
+        <div class="meme" id="js-meme">
+            <div class="meme-component" id="js-canvas-container"></div>
+            <div class="meme-component" id="js-text-container">
 
             </div>
-            <div id="js-edit-text" contentEditable="true" class="edit-text"></div>
+            <div class="edit-text-container" draggable="true" style="display: none" id="js-edit-text-container">
+                <div class="style-panel" id="js-style-panel">
+                    <label for="js-font-select">Шрифт:</label>
+                    <select id="js-font-select" class="select__item"></select>
+
+                    <label for="js-size-select">Размер:</label>
+                    <select id="js-size-select" class="select__item"></select>
+
+                    <label for="js-color-select">Цвет:</label>
+                    <input type="color" id="js-color-select">
+                </div>
+                <div contentEditable="true" class="edit-text" id="js-edit-text"></div>
+                <img class="edit-resize" src="assets/img/resize1.svg" title="Изменение размера" alt="resize" id="js-resize">
+            </div>
         </div>
         <div class="add-image" id="js-add-image">
             <input type="file" class="display-none" id="js-input-img" accept="image/*">
