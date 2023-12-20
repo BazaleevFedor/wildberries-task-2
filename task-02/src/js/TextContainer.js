@@ -1,6 +1,9 @@
 import {context} from "./context.js";
-import MemeMenu from "./memeMenu.js";
 
+
+/**
+ * Класс отвечающий за отрисовку текстовых блоков.
+ */
 export class TextContainer {
     constructor(id, offsetLeft, offsetTop) {
         this._texts = [];

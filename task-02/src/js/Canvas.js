@@ -1,3 +1,6 @@
+/**
+ * Класс отвечающий за взаимодействие с canvas.
+ */
 export class Canvas {
     constructor(parentId, id) {
         document.getElementById(parentId).innerHTML = `<canvas class="meme-layer meme-field_init" id="${ id }"></canvas>`;
@@ -11,27 +14,35 @@ export class Canvas {
         this.addText(textList);
     }
 
+    /**
+     * Функция добавляет изображение с учетом ограничений и пропорций.
+     * @param img - картинка
+     * @param maxHeight - максимальная высота
+     * @param maxWidth - максимальная ширина
+     */
     addImg = (img, maxHeight, maxWidth) => {
         this._img = {img, maxHeight, maxWidth};
-        let width = img.width, height = img.height;
-        if (height > maxHeight) {
-            width *= maxHeight / height;
-            height = maxHeight;
-        }
 
-        if (width > maxWidth) {
-            height *= maxWidth / width;
-            width = maxWidth;
-        }
+        let newWidth, newHeight;
+        const widthRatio = maxWidth / img.width;
+        const heightRatio = maxHeight / img.height;
+        const ratio = Math.min(widthRatio, heightRatio);
 
-        this.changeSize(height, width);
-        this._context.drawImage(img, 0, 0, height, width);
+        newWidth = img.width * ratio;
+        newHeight = img.height * ratio;
+        newWidth = Math.min(newWidth, maxWidth);
+        newHeight = Math.min(newHeight, maxHeight);
+
+        this.changeSize(newHeight, newWidth);
+        this._context.drawImage(img, 0, 0, newWidth, newHeight);
     }
 
     addText = (textList) => {
         textList.forEach((elem) => {
             this._context.font = `${elem.size}px ${elem.font}`;
             this._context.fillStyle = elem.color;
+            this._context.textAlign = 'center';
+
 
             const metrics = this._context.measureText(elem.text);
             const fontHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
@@ -49,19 +60,19 @@ export class Canvas {
                         isPop = true;
                     }
 
-                    this._context.fillText(row.join(' '), curX, curY);
+                    this._context.fillText(row.join(' '), curX + elem.width / 2, curY);
                     row = isPop ? [word] : [];
                     curY += fontHeight;
                 }
             });
 
             if (row.length) {
-                this._context.fillText(row.join(' '), curX, curY);
+                this._context.fillText(row.join(' '), curX + elem.width / 2, curY);
             }
         });
     }
 
-    changeSize = (width, height) => {
+    changeSize = (height, width) => {
         this._canvas.classList.remove('meme-field_init');
         this._canvas.setAttribute('width', width);
         this._canvas.setAttribute('height', height);
@@ -82,7 +93,7 @@ export class Canvas {
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
-        this.clear();
-        this.addImg(this._img.img, this._img.maxHeight, this._img.maxWidth);
+        // this.clear();
+        // this.addImg(this._img.img, this._img.maxHeight, this._img.maxWidth);
     }
 }

@@ -1,8 +1,10 @@
 import memeMenu from "./memeMenu.js";
 import {Canvas} from "./Canvas.js";
 import {TextContainer} from "./TextContainer.js";
-import MemeMenu from "./memeMenu.js";
 
+/**
+ * Класс отвечающий за генерирование мемов.
+ */
 class MemeCreator {
     constructor() {
         document.addEventListener('DOMContentLoaded', () => {
@@ -24,6 +26,10 @@ class MemeCreator {
         });
     }
 
+    /**
+     * Функция отчистки полотна
+     * @private
+     */
     _clear = () => {
         this._menu.blockMenu();
         this._Canvas.clear();
@@ -31,11 +37,20 @@ class MemeCreator {
         this._addDownloadImgButton();
     }
 
+    /**
+     * Функция скачивания мема на устройство пользователя
+     * @private
+     */
     _download = () => {
         this._Canvas.addMeme(this._Text._texts);
         this._Canvas.download();
     }
 
+    /**
+     * Функция добавления фонового изображения
+     * @param file - картинка
+     * @private
+     */
     _addImg = (file) => {
         const reader = new FileReader();
 

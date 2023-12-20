@@ -1,5 +1,8 @@
 import {context} from "./context.js";
 
+/**
+ * Класс отвечающий за взаимодействие с меню.
+ */
 export default class MemeMenu {
     constructor(callbacks) {
         this._menuStateContainer = document.getElementById('js-menu-state');
@@ -15,11 +18,17 @@ export default class MemeMenu {
         return this._chooseButtonID !== null ? context.stateButtons[this._chooseButtonID].action : null;
     }
 
+    /**
+     * Блокировка кнопок меню
+     */
     unlockMenu = () => {
         [...this._buttons.stateButtons, ...this._buttons.managementButtons].forEach((elem) => elem.classList.remove('item_blocked'));
         this._isBlock = false;
     }
 
+    /**
+     * Разблокировка кнопок меню
+     */
     blockMenu = () => {
         [...this._buttons.stateButtons, ...this._buttons.managementButtons].forEach((elem) => {
             elem.classList.add('item_blocked');
@@ -29,6 +38,11 @@ export default class MemeMenu {
         this._isBlock = true;
     }
 
+    /**
+     * Выделение нажатой кнопки.
+     * @param id - идентификатор нажатой кнопки
+     * @private
+     */
     _menuClick = (id) => {
         if (id !== this._chooseButtonID && !this._isBlock) {
             if (this._chooseButtonID !== null) {
