@@ -1,6 +1,7 @@
 import memeMenu from "./memeMenu.js";
 import {Canvas} from "./Canvas.js";
 import {TextContainer} from "./TextContainer.js";
+import MemeMenu from "./memeMenu.js";
 
 class MemeCreator {
     constructor() {
@@ -16,6 +17,7 @@ class MemeCreator {
 
             this._Canvas = new Canvas('js-canvas-container', 'js-meme-canvas');
             this._Text = new TextContainer('js-text-container', this._offsetLeft, this._offsetTop);
+            this._textContainerElem = document.getElementById('js-text-container');
             this._menu = new memeMenu([this._download, this._clear]);
 
             this._addListeners();
@@ -70,6 +72,10 @@ class MemeCreator {
                 this._addImg(file);
                 this._addImageInputElem.value = '';
             }
+        });
+
+        this._textContainerElem.addEventListener('click', (event) => {
+            this._Text._containerClick(event, this._menu.getCurAction());
         });
     }
 }

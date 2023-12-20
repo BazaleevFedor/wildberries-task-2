@@ -1,4 +1,5 @@
 import {context} from "./context.js";
+import MemeMenu from "./memeMenu.js";
 
 export class TextContainer {
     constructor(id, offsetLeft, offsetTop) {
@@ -14,6 +15,7 @@ export class TextContainer {
         this._colorSelectElem = document.getElementById('js-color-select');
         this._sizeSelectElem = document.getElementById('js-size-select');
         this._resizeElem = document.getElementById('js-resize');
+        this._stylePanelElem = document.getElementById('js-style-panel');
 
         this._renderEditElem();
         this._addListeners();
@@ -29,6 +31,13 @@ export class TextContainer {
         this._addEditElem(newElemInfo);
     }
 
+    clear = () => {
+        this._container.innerHTML = '';
+        this._texts = [];
+        this._removeEditElem();
+        this._editText = null;
+    }
+
     _addEditElem = (elemInfo) => {
         this._editElem = document.getElementById('js-edit-text-container');
         this._editElem.style.display = 'grid';
@@ -38,23 +47,24 @@ export class TextContainer {
 
     _saveElem = (elemInfo) => {
         this._removeEditElem();
-        const newElement = document.createElement('div');
-        newElement.innerHTML = this._renderElem(elemInfo);
-        this._container.appendChild(newElement);
-
         this._editText = null;
 
-        this._texts[elemInfo.id] = elemInfo;
+        if (elemInfo.text) {
+            const newElement = document.createElement('div');
+            newElement.innerHTML = this._renderElem(elemInfo);
+            const elem = newElement.firstElementChild;
+            this._container.appendChild(elem);
 
-        const elem = newElement.firstElementChild;
-        elem.addEventListener('mouseup', (event) => {
-            if (this._editText) {
-                this._saveElem(this._editText);
-            }
-            this._removeElem(this._texts[elem.getAttribute('data-id')]);
-            this._addEditElem(this._texts[elem.getAttribute('data-id')]);
-            event.stopPropagation();
-        });
+            this._texts[elemInfo.id] = elemInfo;
+            elem.addEventListener('mouseup', (event) => {
+                if (this._editText) {
+                    this._saveElem(this._editText);
+                }
+                this._removeElem(this._texts[elem.getAttribute('data-id')]);
+                this._addEditElem(this._texts[elem.getAttribute('data-id')]);
+                event.stopPropagation();
+            });
+        }
     }
 
     _removeEditElem = () => {
@@ -65,22 +75,15 @@ export class TextContainer {
         document.querySelector(`.text-container[data-id="${elem.id}"]`)?.remove();
     }
 
-    clear = () => {
-        this._container.innerHTML = '';
-        this._texts = [];
-        this._removeEditElem();
-        this._editText = null;
+    _containerClick = (event, curMenuAction) => {
+        if (!this._editText && curMenuAction === 'text') {
+            this.addNewElem(event.clientX, event.clientY);
+        } else if (this._editText) {
+            this._saveElem(this._editText);
+        }
     }
 
     _addListeners = () => {
-        this._container.addEventListener('click', (event) => {
-            if (!this._editText) {
-                this.addNewElem(event.clientX, event.clientY);
-            } else if (this._editText) {
-                this._saveElem(this._editText);
-            }
-        });
-
         this._editElem.addEventListener('click', (event) => {
             event.stopPropagation()
         });
@@ -105,6 +108,10 @@ export class TextContainer {
         });
 
         this._editElem.firstElementChild.onmousedown = (event) => {
+            const startX = event.clientX;
+            const startY = event.clientY;
+
+            this._stylePanelElem.style.cursor = 'grabbing';
             const deltaX = Number(this._editElem.style.left.replace('px', '')) + this._offsetLeft - event.clientX;
             const deltaY = Number(this._editElem.style.top.replace('px', '')) + this._offsetTop - event.clientY;
 
@@ -115,15 +122,23 @@ export class TextContainer {
                 this._editElem.style.top = `${this._editText.top}px`;
 
             }
-            moveEditElem(event.pageX, event.pageY);
+            moveEditElem(event.clientX, event.clientY);
 
             const onMouseMove = (event) => {
-                moveEditElem(event.pageX, event.pageY);
+                const width = document.body.offsetWidth;
+                const height = document.body.offsetHeight;
+                if (event.clientX < 0 || event.clientY < 0 || event.clientX > width || event.clientY > height) {
+                    moveEditElem(startX, startY);
+                    this._editElem.dispatchEvent(new Event('mouseup'));
+                    return;
+                }
+                moveEditElem(event.clientX, event.clientY);
             }
 
             document.addEventListener('mousemove', onMouseMove);
 
             this._editElem.onmouseup = () => {
+                this._stylePanelElem.style.cursor = 'grab';
                 document.removeEventListener('mousemove', onMouseMove);
                 this._editElem.onmouseup = null;
             };
@@ -134,6 +149,9 @@ export class TextContainer {
         };
 
         this._resizeElem.onmousedown = (event) => {
+            const startX = event.clientX;
+            const startY = event.clientY;
+
             const moveEditElem = (x, y) => {
                 this._editText.width = x - this._offsetLeft - this._editText.left;
                 this._editText.height = y - this._offsetTop - this._editText.top;
@@ -144,6 +162,13 @@ export class TextContainer {
             moveEditElem(event.pageX, event.pageY);
 
             const onMouseMove = (event) => {
+                const width = document.body.offsetWidth;
+                const height = document.body.offsetHeight;
+                if (event.clientX < 0 || event.clientY < 0 || event.clientX > width || event.clientY > height) {
+                    moveEditElem(startX, startY);
+                    this._editElem.dispatchEvent(new Event('mouseup'));
+                    return;
+                }
                 moveEditElem(event.pageX, event.pageY);
             }
 

@@ -10,7 +10,6 @@ export class Canvas {
     }
 
     addMeme = (textList) => {
-        this.addImg(this._img.img, this._img.maxHeight, this._img.maxWidth);
         this.addText(textList);
     }
 
@@ -41,7 +40,7 @@ export class Canvas {
             const actualHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
 
             let row = [];
-            let curX = elem.left, curY = elem.top + fontHeight;
+            let curX = elem.left + 1, curY = elem.top + actualHeight + 3;
 
             elem.text.split(' ').forEach((word) => {
                 row.push(word);

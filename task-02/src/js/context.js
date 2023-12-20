@@ -16,8 +16,8 @@ export const context = {
         {title: 'Comic Sans MS'},
         {title: 'Arial'},
         {title: 'Montserrat'},
-        {title: 'Mirriad Pro'},
-        {title: 'Helvetica'},
+        {title: 'Papyrus Pixel'},
+        {title: 'Block Helvetica'},
     ],
     fontSizes: [
         {title: '6'},
@@ -32,6 +32,9 @@ export const context = {
         {title: '35'},
         {title: '40'},
         {title: '45'},
+        {title: '50'},
+        {title: '60'},
+        {title: '70'},
     ],
     defaultElem: {
         text: 'Ваш мемный текст',
