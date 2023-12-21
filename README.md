@@ -16,4 +16,4 @@
 
 [8 Визуализация алгоритмов сортировки](https://github.com/BazaleevFedor/wildberries-task-2/tree/main/task-08)
 
-[10 Многопользовательская игра на одном компьютере](https://github.com/BazaleevFedor/wildberries-task-2/tree/main/task-010)
+[10 Многопользовательская игра на одном компьютере](https://github.com/BazaleevFedor/wildberries-task-2/tree/main/task-10)
